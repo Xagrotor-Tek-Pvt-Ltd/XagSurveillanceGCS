@@ -245,6 +245,9 @@ namespace XagSurveillanceGCS.GCSViews
             this.coords1 = new XagSurveillanceGCS.Controls.Coords();
             this.CHK_autopan = new System.Windows.Forms.CheckBox();
             this.CB_tuning = new System.Windows.Forms.CheckBox();
+            this.TimeToHome = new System.Windows.Forms.Label();
+            this.CMB_MapPoint = new System.Windows.Forms.ComboBox();
+            this.MapPoint_Distance = new System.Windows.Forms.Label();
             this.ZedGraphTimer = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.openScriptDialog = new System.Windows.Forms.OpenFileDialog();
@@ -604,14 +607,14 @@ namespace XagSurveillanceGCS.GCSViews
             this.tabControlactions.Controls.Add(this.tabActions);
             this.tabControlactions.Controls.Add(this.tabPagemessages);
             this.tabControlactions.Controls.Add(this.tabActionsSimple);
-            this.tabControlactions.Controls.Add(this.tabPagePreFlight);
+            // this.tabControlactions.Controls.Add(this.tabPagePreFlight);
             this.tabControlactions.Controls.Add(this.tabGauges);
-            this.tabControlactions.Controls.Add(this.tabTransponder);
+            // this.tabControlactions.Controls.Add(this.tabTransponder);
             this.tabControlactions.Controls.Add(this.tabStatus);
-            this.tabControlactions.Controls.Add(this.tabServo);
-            this.tabControlactions.Controls.Add(this.tabAuxFunction);
-            this.tabControlactions.Controls.Add(this.tabScripts);
-            this.tabControlactions.Controls.Add(this.tabPayload);
+            // this.tabControlactions.Controls.Add(this.tabServo);
+            // this.tabControlactions.Controls.Add(this.tabAuxFunction);
+            // this.tabControlactions.Controls.Add(this.tabScripts);
+            // this.tabControlactions.Controls.Add(this.tabPayload);
             this.tabControlactions.Controls.Add(this.tabTLogs);
             this.tabControlactions.Controls.Add(this.tablogbrowse);
             this.tabControlactions.Controls.Add(this.tabExternalAHRS);
@@ -754,23 +757,23 @@ namespace XagSurveillanceGCS.GCSViews
             // tableLayoutPanel1
             // 
             resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
-            this.tableLayoutPanel1.Controls.Add(this.BUT_SendMSG, 2, 4);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_abortland, 4, 4);
-            this.tableLayoutPanel1.Controls.Add(this.modifyandSetLoiterRad, 4, 2);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_clear_track, 4, 3);
+            // this.tableLayoutPanel1.Controls.Add(this.BUT_SendMSG, 2, 4);
+            // this.tableLayoutPanel1.Controls.Add(this.BUT_abortland, 4, 4);
+            this.tableLayoutPanel1.Controls.Add(this.modifyandSetLoiterRad, 3, 2);
+            // this.tableLayoutPanel1.Controls.Add(this.BUT_clear_track, 4, 3);
             this.tableLayoutPanel1.Controls.Add(this.CMB_action, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.BUTactiondo, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_resumemis, 3, 4);
-            this.tableLayoutPanel1.Controls.Add(this.modifyandSetAlt, 4, 1);
-            this.tableLayoutPanel1.Controls.Add(this.modifyandSetSpeed, 4, 0);
+            // this.tableLayoutPanel1.Controls.Add(this.BUT_resumemis, 3, 4);
+            this.tableLayoutPanel1.Controls.Add(this.modifyandSetAlt, 3, 1);
+            this.tableLayoutPanel1.Controls.Add(this.modifyandSetSpeed, 3, 0);
             this.tableLayoutPanel1.Controls.Add(this.CMB_setwp, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.BUT_ARM, 3, 3);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_mountmode, 1, 3);
+            // this.tableLayoutPanel1.Controls.Add(this.BUT_mountmode, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.BUT_joystick, 2, 3);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_RAWSensor, 3, 2);
-            this.tableLayoutPanel1.Controls.Add(this.BUT_Homealt, 3, 0);
-            this.tableLayoutPanel1.Controls.Add(this.BUTrestartmission, 3, 1);
-            this.tableLayoutPanel1.Controls.Add(this.CMB_mountmode, 0, 3);
+            // this.tableLayoutPanel1.Controls.Add(this.BUT_RAWSensor, 3, 2);
+            // this.tableLayoutPanel1.Controls.Add(this.BUT_Homealt, 3, 0);
+            // this.tableLayoutPanel1.Controls.Add(this.BUTrestartmission, 3, 1);
+            // this.tableLayoutPanel1.Controls.Add(this.CMB_mountmode, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.BUT_quickrtl, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.BUT_quickmanual, 2, 1);
             this.tableLayoutPanel1.Controls.Add(this.BUT_setwp, 1, 1);
@@ -2581,7 +2584,7 @@ namespace XagSurveillanceGCS.GCSViews
             this.addPoiToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.deleteToolStripMenuItem,
             this.saveFileToolStripMenuItem,
-            // this.loadFileToolStripMenuItem,
+            this.loadFileToolStripMenuItem,
             this.poiatcoordsToolStripMenuItem});
             this.addPoiToolStripMenuItem.Name = "addPoiToolStripMenuItem";
             resources.ApplyResources(this.addPoiToolStripMenuItem, "addPoiToolStripMenuItem");
@@ -2601,9 +2604,9 @@ namespace XagSurveillanceGCS.GCSViews
             // 
             // loadFileToolStripMenuItem
             // 
-            // this.loadFileToolStripMenuItem.Name = "loadFileToolStripMenuItem";
-            // resources.ApplyResources(this.loadFileToolStripMenuItem, "loadFileToolStripMenuItem");
-            // this.loadFileToolStripMenuItem.Click += new System.EventHandler(this.loadFileToolStripMenuItem_Click);
+            this.loadFileToolStripMenuItem.Name = "loadFileToolStripMenuItem";
+            resources.ApplyResources(this.loadFileToolStripMenuItem, "loadFileToolStripMenuItem");
+            this.loadFileToolStripMenuItem.Click += new System.EventHandler(this.loadFileToolStripMenuItem_Click);
             // 
             // poiatcoordsToolStripMenuItem
             // 
@@ -2889,7 +2892,9 @@ namespace XagSurveillanceGCS.GCSViews
             resources.ApplyResources(this.panel1, "panel1");
             this.panel1.Controls.Add(this.coords1);
             this.panel1.Controls.Add(this.CHK_autopan);
-            // this.panel1.Controls.Add(this.CB_tuning);
+            this.panel1.Controls.Add(this.CMB_MapPoint);
+            this.panel1.Controls.Add(this.TimeToHome);
+            this.panel1.Controls.Add(this.MapPoint_Distance);
             this.panel1.Name = "panel1";
             // 
             // coords1
@@ -2915,6 +2920,37 @@ namespace XagSurveillanceGCS.GCSViews
             this.toolTip1.SetToolTip(this.CHK_autopan, resources.GetString("CHK_autopan.ToolTip"));
             this.CHK_autopan.UseVisualStyleBackColor = true;
             this.CHK_autopan.CheckedChanged += new System.EventHandler(this.CHK_autopan_CheckedChanged);
+            //
+            // Time To Home
+            //
+            this.TimeToHome.Name = "TimeToHome";
+            this.TimeToHome.Text = "Time to Home: 0.00 s";
+            this.TimeToHome.ForeColor = System.Drawing.Color.White;
+            this.TimeToHome.Location = new System.Drawing.Point(320,0);
+            this.TimeToHome.Size = new System.Drawing.Size(150, 20);
+            this.TimeToHome.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // this.TimeToHome.AutoSize = true;
+            //
+            // CMB_MapPoint
+            //
+            this.CMB_MapPoint.Name = "CMB_MapPoint";
+            this.CMB_MapPoint.ForeColor = System.Drawing.Color.White;
+            this.CMB_MapPoint.Location = new System.Drawing.Point(480,0);
+            this.CMB_MapPoint.Size = new System.Drawing.Size(80, 20);
+            this.CMB_MapPoint.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CMB_MapPoint.DropDownWidth = 80;
+            this.CMB_MapPoint.FormattingEnabled = true;
+            this.CMB_MapPoint.Click += new System.EventHandler(this.CMB_MapPoint_Click);
+            this.CMB_MapPoint.SelectedIndexChanged += new System.EventHandler(this.CMB_MapPoint_SelectedIndexChanged);
+            //
+            // MapPoint_Distance
+            //
+            this.MapPoint_Distance.Name = "MapPoint_Distance";
+            this.MapPoint_Distance.Text = "0.00 m";
+            this.MapPoint_Distance.ForeColor = System.Drawing.Color.White;
+            this.MapPoint_Distance.Location = new System.Drawing.Point(550,0);
+            this.MapPoint_Distance.Size = new System.Drawing.Size(80, 20);
+            this.MapPoint_Distance.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // CB_tuning
             // 
@@ -2956,7 +2992,7 @@ namespace XagSurveillanceGCS.GCSViews
             this.TopSplit.Dock = DockStyle.Fill;
             this.TopSplit.Orientation = Orientation.Vertical;
             this.TopSplit.SplitterDistance = (int)(this.TopSplit.Width * 0.55);
-            this.TopSplit.IsSplitterFixed = true;
+            // this.TopSplit.IsSplitterFixed = true;
             this.TopSplit.Panel2.Controls.Add(this.tableMap);
             //
             // MainH BottomPanel
@@ -3297,5 +3333,8 @@ namespace XagSurveillanceGCS.GCSViews
         public System.Windows.Forms.TabPage tabExternalAHRS;
         private Controls.EAHRSControl eahrsControl1;
         private ToolStripMenuItem imHereToolStripMenuItem;
+        private System.Windows.Forms.Label TimeToHome;
+        private System.Windows.Forms.ComboBox CMB_MapPoint;
+        private System.Windows.Forms.Label MapPoint_Distance;
     }
 }

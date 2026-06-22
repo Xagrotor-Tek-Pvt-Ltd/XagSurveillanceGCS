@@ -69,7 +69,7 @@ namespace XagSurveillanceGCS
             this.MainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenuFlightData,
             this.MenuFlightPlanner,
-            // this.MenuInitConfig,
+            this.MenuInitConfig,
             this.MenuConfigTune,
             this.MenuSimulation,
             // this.MenuHelp,

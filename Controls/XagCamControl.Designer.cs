@@ -113,26 +113,26 @@ namespace XagSurveillanceGCS.Controls
             // osd on
 
             this.btnOsdOn = new System.Windows.Forms.Button();
-            this.btnOsdOn.Text = "OSD On";
+            this.btnOsdOn.Text = "Connect Gimbal";
             this.btnOsdOn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnOsdOn.Click += new System.EventHandler(this.BtnOsdOn_Click);
             // osd off
 
             this.btnOsdOff = new System.Windows.Forms.Button();
-            this.btnOsdOff.Text = "OSD Off";
+            this.btnOsdOff.Text = "Point Home";
             this.btnOsdOff.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnOsdOff.Click += new System.EventHandler(this.BtnOsdOff_Click);
 
             // Ai osd on
 
             this.btnAiOsdOn = new System.Windows.Forms.Button();
-            this.btnAiOsdOn.Text = "AI OSD On";
+            this.btnAiOsdOn.Text = "Point Down";
             this.btnAiOsdOn.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnAiOsdOn.Click += new System.EventHandler(this.BtnAiOsdOn_Click);
             // Ai osd off
 
             this.btnAiOsdOff = new System.Windows.Forms.Button();
-            this.btnAiOsdOff.Text = "AI OSD Off";
+            this.btnAiOsdOff.Text = "Stop Track";
             this.btnAiOsdOff.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnAiOsdOff.Click += new System.EventHandler(this.BtnAiOsdOff_Click);
             // Digital Zoom +

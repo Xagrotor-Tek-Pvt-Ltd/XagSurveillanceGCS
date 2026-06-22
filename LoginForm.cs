@@ -10,7 +10,7 @@ namespace XagSurveillanceGCS
     {
         public bool LoginSuccess { get; private set; } = false;
 
-        public string SelectedLMMode {get; private set;} = "Combat Mode";
+        public string SelectedLMMode {get; private set;} = "Operator Mode";
 
         public string SystemMACAddress = "";
 
@@ -36,6 +36,11 @@ namespace XagSurveillanceGCS
                     Console.WriteLine("Selected MAC Address: " + nic.GetPhysicalAddress());
                     this.SystemMACAddress = nic.GetPhysicalAddress().ToString();
                 }
+            }
+
+            if(CMB_setLMMode.SelectedIndex == 1)
+            {
+                this.SelectedLMMode = "OEM Mode";    
             }
 
             // Console.WriteLine("MAC Address: " + mac);

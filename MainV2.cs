@@ -536,6 +536,8 @@ namespace XagSurveillanceGCS
 
         bool adsbThread = false;
 
+        public static bool joystick_manual_control = false;
+
         Thread httpthread;
         Thread pluginthread;
 
@@ -553,6 +555,8 @@ namespace XagSurveillanceGCS
         /// starts at -1 because it'll get incremented before sending
         /// </summary>
         private int adsbIndex = -1;
+
+        public static string CurrentOperatingMode = "";
 
         /// <summary>
         /// used to call anything as needed.
@@ -821,6 +825,8 @@ namespace XagSurveillanceGCS
                         NativeMethods.ES_CONTINUOUS | NativeMethods.ES_SYSTEM_REQUIRED);
             }
 
+            CurrentOperatingMode = Program.LMMode;
+
             ChangeUnits();
 
             if (Settings.Instance["showairports"] != null)
@@ -855,7 +861,7 @@ namespace XagSurveillanceGCS
                 FlightData = new GCSViews.FlightData();
                 log.Info("Create FP");
                 FlightPlanner = new GCSViews.FlightPlanner();
-                //Configuration = new GCSViews.ConfigurationView.Setup();
+                // Configuration = new GCSViews.ConfigurationView.Setup();
                 log.Info("Create SIM");
                 Simulation = new GCSViews.SITL();
                 //Firmware = new GCSViews.Firmware();
@@ -948,6 +954,7 @@ namespace XagSurveillanceGCS
                     }
 
                 }
+
 
                 if (Settings.Instance["MainMaximised"] != null)
                 {
@@ -2393,39 +2400,46 @@ namespace XagSurveillanceGCS
                             }
                             else
                             {
-                                MAVLink.mavlink_manual_control_t rc = new MAVLink.mavlink_manual_control_t();
+                                // MAVLink.mavlink_manual_control_t rc = new MAVLink.mavlink_manual_control_t();
 
-                                rc.target = comPort.MAV.compid;
+                                // rc.target = comPort.MAV.compid;
 
-                                if (joystick.getJoystickAxis(1) != Joystick.joystickaxis.None)
-                                    rc.x = MainV2.comPort.MAV.cs.rcoverridech1;
-                                if (joystick.getJoystickAxis(2) != Joystick.joystickaxis.None)
-                                    rc.y = MainV2.comPort.MAV.cs.rcoverridech2;
-                                if (joystick.getJoystickAxis(3) != Joystick.joystickaxis.None)
-                                    rc.z = MainV2.comPort.MAV.cs.rcoverridech3;
-                                if (joystick.getJoystickAxis(4) != Joystick.joystickaxis.None)
-                                    rc.r = MainV2.comPort.MAV.cs.rcoverridech4;
+                                // if (joystick.getJoystickAxis(1) != Joystick.joystickaxis.None)
+                                //     rc.x = MainV2.comPort.MAV.cs.rcoverridech1;
+                                // if (joystick.getJoystickAxis(2) != Joystick.joystickaxis.None)
+                                //     rc.y = MainV2.comPort.MAV.cs.rcoverridech2;
+                                // if (joystick.getJoystickAxis(3) != Joystick.joystickaxis.None)
+                                //     rc.z = MainV2.comPort.MAV.cs.rcoverridech3;
+                                // if (joystick.getJoystickAxis(4) != Joystick.joystickaxis.None)
+                                //     rc.r = MainV2.comPort.MAV.cs.rcoverridech4;
 
-                                if (lastjoystick.AddMilliseconds(rate) < DateTime.Now)
-                                {
-                                    if (!comPort.BaseStream.IsOpen)
-                                        continue;
+                                // if (lastjoystick.AddMilliseconds(rate) < DateTime.Now)
+                                // {
+                                //     if (!comPort.BaseStream.IsOpen)
+                                //         continue;
 
-                                    if (comPort.BaseStream.BytesToWrite < 50)
-                                    {
-                                        if (sitl)
-                                        {
-                                            XagSurveillanceGCS.GCSViews.SITL.rcinput();
-                                        }
-                                        else
-                                        {
-                                            comPort.sendPacket(rc, comPort.MAV.sysid, comPort.MAV.compid);
-                                        }
+                                //     if (comPort.BaseStream.BytesToWrite < 50)
+                                //     {
+                                //         if (sitl)
+                                //         {
+                                //             XagSurveillanceGCS.GCSViews.SITL.rcinput();
+                                //         }
+                                //         else
+                                //         {
+                                //             comPort.sendPacket(rc, comPort.MAV.sysid, comPort.MAV.compid);
+                                //         }
 
-                                        count++;
-                                        lastjoystick = DateTime.Now;
-                                    }
-                                }
+                                //         count++;
+                                //         lastjoystick = DateTime.Now;
+                                //     }
+                                // }
+                                // joystick_manual_control = true;
+                                // Console.WriteLine("Joystick Gimbal Control Is Runningggggggggg "+MainV2.comPort.MAV.cs.rcoverridech2);
+                                double camera_pitch = (double) MainV2.comPort.MAV.cs.rcoverridech3/1000.0;
+                                double camera_yaw = (double) MainV2.comPort.MAV.cs.rcoverridech4/1000.0;
+                                double camera_zoom = (double) -MainV2.comPort.MAV.cs.rcoverridech2/1000.0;
+                                // FlightData.XagCamPitchYawCommand(camera_pitch/2000000.00, camera_yaw/2000000.00);
+                                FlightData.DoJoystickCommandsToGimbal(camera_pitch, camera_yaw, camera_zoom);
                             }
                         }
                     }
@@ -3164,8 +3178,11 @@ namespace XagSurveillanceGCS
 
             MyView.AddScreen(new MainSwitcher.Screen("FlightData", FlightData, true));
             MyView.AddScreen(new MainSwitcher.Screen("FlightPlanner", FlightPlanner, true));
-            // MyView.AddScreen(new MainSwitcher.Screen("HWConfig", typeof(GCSViews.InitialSetup), false));
-            MyView.AddScreen(new MainSwitcher.Screen("SWConfig", typeof(GCSViews.SoftwareConfig), false));
+            if(Program.LMMode == "OEM Mode")
+            {   
+                MyView.AddScreen(new MainSwitcher.Screen("HWConfig", typeof(GCSViews.InitialSetup), false));
+                MyView.AddScreen(new MainSwitcher.Screen("SWConfig", typeof(GCSViews.SoftwareConfig), false));
+            }
             MyView.AddScreen(new MainSwitcher.Screen("Simulation", Simulation, true));
             MyView.AddScreen(new MainSwitcher.Screen("Help", typeof(GCSViews.Help), false));
 

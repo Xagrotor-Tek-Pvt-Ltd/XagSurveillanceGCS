@@ -343,6 +343,7 @@ namespace XagSurveillanceGCS.Controls
                         return;
                     }
                 }
+                // _stream.Start("ksvideosrc ! videoconvert ! appsink");
                 _stream.Start("rtspsrc location=rtsp://192.168.199.119:8554/merge latency=0 dulation=-1 ! decodebin ! videoconvert ! video/x-raw,format=BGRA ! appsink name=outsink");
             }
             catch (Exception ex)

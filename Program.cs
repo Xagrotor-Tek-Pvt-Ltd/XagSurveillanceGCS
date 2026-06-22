@@ -65,7 +65,7 @@ namespace XagSurveillanceGCS
 
         public static Splash Splash;
 
-        public static string LMMode = "Combat Mode";
+        public static string LMMode = "Operator Mode";
 
         internal static Thread Thread;
 

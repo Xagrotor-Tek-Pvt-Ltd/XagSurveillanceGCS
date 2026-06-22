@@ -35,7 +35,7 @@ namespace XagSurveillanceGCS.Controls
                 "XAGCAM2",
             });
 
-            cmbCameraSelect.SelectedIndex = 1;
+            cmbCameraSelect.SelectedIndex = 0;
         }
 
         public String SelectedCamera

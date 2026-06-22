@@ -160,7 +160,7 @@ namespace XagSurveillanceGCS.Controls
             this.Controls.Add(this.VideoBox);
             this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "GimbalVideoControl";
-            this.Size = new System.Drawing.Size(750, 500);
+            this.AutoSize = true;
             ((System.ComponentModel.ISupportInitialize)(this.VideoBox)).EndInit();
             this.ResumeLayout(false);
 

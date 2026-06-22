@@ -117,6 +117,8 @@ namespace XagSurveillanceGCS.Joystick
 
             this.ResumeLayout();
 
+            // chk_manualcontrol.Checked = MainV2.joystick_manual_control;
+
             if (MainV2.joystick != null && MainV2.joystick.enabled)
             {
                 timer1.Start();
@@ -154,6 +156,8 @@ namespace XagSurveillanceGCS.Joystick
                 var joy = JoystickBase.Create(() => MainV2.comPort);
 
                 joy.elevons = CHK_elevons.Checked;
+
+                // joy.manual_control = chk_manualcontrol.Checked;
 
                 //show error message if a joystick is not connected when Enable is clicked
                 if (!joy.start(CMB_joysticks.Text))

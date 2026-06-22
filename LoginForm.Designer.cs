@@ -8,8 +8,8 @@ namespace XagSurveillanceGCS
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Button btnLogin;
         private System.Windows.Forms.Label label1;
-
         private System.Windows.Forms.Label TXT_version;
+        private System.Windows.Forms.ComboBox CMB_setLMMode;
 
         protected override void Dispose(bool disposing)
         {
@@ -25,6 +25,7 @@ namespace XagSurveillanceGCS
             this.txtUsername = new System.Windows.Forms.TextBox();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.btnLogin = new System.Windows.Forms.Button();
+            this.CMB_setLMMode = new System.Windows.Forms.ComboBox();
             // this.SuspendLayout();
 
             this.label1 = new System.Windows.Forms.Label();
@@ -55,6 +56,16 @@ namespace XagSurveillanceGCS
             this.TXT_version.TabIndex = 1;
             this.TXT_version.Text = "Version: ";
             this.TXT_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+
+            // CMB_setLMMode
+            this.CMB_setLMMode.Location = new System.Drawing.Point(192, 230);
+            this.CMB_setLMMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CMB_setLMMode.Size = new System.Drawing.Size(100, 23);
+            this.CMB_setLMMode.DropDownWidth = 150;
+            this.CMB_setLMMode.FormattingEnabled = true;
+            this.CMB_setLMMode.Items.AddRange(new object[] {"Operator Mode","OEM Mode"});
+            this.CMB_setLMMode.Name = "CMB_setLMMode";
+            this.CMB_setLMMode.SelectedIndex = 0;
 
             // txtUsername
             this.txtUsername.BackColor = System.Drawing.Color.Black;
@@ -97,6 +108,7 @@ namespace XagSurveillanceGCS
             this.Controls.Add(this.txtUsername);
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.btnLogin);
+            this.Controls.Add(this.CMB_setLMMode);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.TXT_version);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;

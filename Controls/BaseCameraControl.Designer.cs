@@ -50,20 +50,21 @@ namespace XagSurveillanceGCS.Controls
             this.TargetDistance.ForeColor = System.Drawing.Color.White;
             this.TargetDistance.Location = new System.Drawing.Point(10,12);
             this.TargetDistance.Size = new System.Drawing.Size(110, 20);
+            this.TargetDistance.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
             // DooafX
             this.DooafX.Name = "DOOAFX";
             this.DooafX.Text = "DOOAFX: 0.00 m";
             this.DooafX.ForeColor = System.Drawing.Color.White;
-            this.DooafX.Location = new System.Drawing.Point(120,12);
-            // this.DooafX.Size = new System.Drawing.Size(250, 20);
+            this.DooafX.Location = new System.Drawing.Point(150,12);
+            this.DooafX.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
             // DooafY
             this.DooafY.Name = "DOOAFY";
             this.DooafY.Text = "DOOAFY: 0.00 m";
             this.DooafY.ForeColor = System.Drawing.Color.White;
-            this.DooafY.Location = new System.Drawing.Point(240,12);
-            this.DooafY.Size = new System.Drawing.Size(250, 20);
+            this.DooafY.Location = new System.Drawing.Point(280,12);
+            this.DooafY.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
             // Camera Host Panel
             this.pnlCameraHost.Location = new System.Drawing.Point(10, 40);

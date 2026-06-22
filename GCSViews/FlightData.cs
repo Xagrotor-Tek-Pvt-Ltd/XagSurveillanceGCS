@@ -198,20 +198,9 @@ namespace XagSurveillanceGCS.GCSViews
             Loiter_Unlim,
             Return_To_Launch,
             Preflight_Calibration,
-            Mission_Start,
             Preflight_Reboot_Shutdown,
-            Trigger_Camera,
-            System_Time,
-            Battery_Reset,
-            ADSB_Out_Ident,
             Scripting_cmd_stop_and_restart,
-            Scripting_cmd_stop,
-            HighLatency_Enable,
-            HighLatency_Disable,
-            Toggle_Safety_Switch,
-            Do_Parachute,
-            Engine_Start,
-            Engine_Stop,
+            Scripting_cmd_stop
         }
 
         private double target_latitude = 0.0;
@@ -474,6 +463,8 @@ namespace XagSurveillanceGCS.GCSViews
             motorTest = new MotorTestPanel();
             motorTest.Activate();
             this.tabGauges.Controls.Add(motorTest);
+            Console.WriteLine("Current Operating Mode: " + MainV2.CurrentOperatingMode);
+            DistanceTimeStartThread();
         }
 
         public void loadTargetLatLon(object sender,MAVLink.MAVLinkMessage packet)
@@ -873,6 +864,8 @@ namespace XagSurveillanceGCS.GCSViews
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
+
+            DistanceTimeStopThread();
 
             MainV2.comPort.logreadmode = false;
             try
@@ -1478,6 +1471,12 @@ namespace XagSurveillanceGCS.GCSViews
         {
             try
             {
+                // CustomMessageBox.Show(Strings.CommandFailed, Strings.ERROR);
+                // CustomMessageBox.Show(
+                //     "Prearm: Airspeed 1 not healthy", "Warranty",
+                //     MessageBoxButtons.OK,
+                //     CustomMessageBox.MessageBoxIcon.Information
+                // );
                 ((Control) sender).Enabled = false;
                 MainV2.comPort.setMode("Auto");
             }
@@ -1741,19 +1740,19 @@ namespace XagSurveillanceGCS.GCSViews
 
         private void BUTactiondo_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (CMB_action.Text == actions.Trigger_Camera.ToString())
-                {
-                    MainV2.comPort.setDigicamControl(true);
-                    return;
-                }
-            }
-            catch
-            {
-                CustomMessageBox.Show(Strings.CommandFailed, Strings.ERROR);
-                return;
-            }
+            // try
+            // {
+            //     if (CMB_action.Text == actions.Trigger_Camera.ToString())
+            //     {
+            //         MainV2.comPort.setDigicamControl(true);
+            //         return;
+            //     }
+            // }
+            // catch
+            // {
+            //     CustomMessageBox.Show(Strings.CommandFailed, Strings.ERROR);
+            //     return;
+            // }
 
             if (CMB_action.Text == actions.Scripting_cmd_stop_and_restart.ToString())
             {
@@ -1783,24 +1782,24 @@ namespace XagSurveillanceGCS.GCSViews
                 }
             }
 
-            if (CMB_action.Text == actions.System_Time.ToString())
-            {
-                var now = DateTime.UtcNow;
-                var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                ulong time_unix_us = Convert.ToUInt64((now - epoch).TotalMilliseconds * 1000);
-                try
-                {
-                    MainV2.comPort.sendPacket(
-                        new MAVLink.mavlink_system_time_t() {time_unix_usec = time_unix_us, time_boot_ms = 0},
-                        MainV2.comPort.sysidcurrent, MainV2.comPort.compidcurrent);
-                }
-                catch
-                {
-                    CustomMessageBox.Show(Strings.CommandFailed, Strings.ERROR);
-                }
+            // if (CMB_action.Text == actions.System_Time.ToString())
+            // {
+            //     var now = DateTime.UtcNow;
+            //     var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            //     ulong time_unix_us = Convert.ToUInt64((now - epoch).TotalMilliseconds * 1000);
+            //     try
+            //     {
+            //         MainV2.comPort.sendPacket(
+            //             new MAVLink.mavlink_system_time_t() {time_unix_usec = time_unix_us, time_boot_ms = 0},
+            //             MainV2.comPort.sysidcurrent, MainV2.comPort.compidcurrent);
+            //     }
+            //     catch
+            //     {
+            //         CustomMessageBox.Show(Strings.CommandFailed, Strings.ERROR);
+            //     }
 
-                return;
-            }
+            //     return;
+            // }
 
             if (
                 CustomMessageBox.Show("Are you sure you want to do " + CMB_action.Text + " ?", "Action",
@@ -1828,50 +1827,50 @@ namespace XagSurveillanceGCS.GCSViews
                         ((Control) sender).Enabled = true;
                         return;
                     }
-                    if (CMB_action.Text == actions.HighLatency_Enable.ToString())
-                    {
-                        MainV2.comPort.doHighLatency(true);
-                        ((Control)sender).Enabled = true;
-                        return;
-                    }
-                    if (CMB_action.Text == actions.HighLatency_Disable.ToString())
-                    {
-                        MainV2.comPort.doHighLatency(false);
-                        ((Control)sender).Enabled = true;
-                        return;
-                    }
-                    if (CMB_action.Text == actions.Toggle_Safety_Switch.ToString())
-                    {
-                        var target_system = (byte)MainV2.comPort.sysidcurrent;
-                        if (target_system == 0) {
-                            log.Info("Not toggling safety on sysid 0");
-                            return;
-                        }
-                        var custom_mode = (MainV2.comPort.MAV.cs.sensors_enabled.motor_control && MainV2.comPort.MAV.cs.sensors_enabled.seen) ? 1u : 0u;
-                        var mode = new MAVLink.mavlink_set_mode_t() { custom_mode = custom_mode, target_system = target_system };
-                        MainV2.comPort.setMode(mode, MAVLink.MAV_MODE_FLAG.SAFETY_ARMED);
-                        ((Control)sender).Enabled = true;
-                        return;
-                    }
-                    if (CMB_action.Text == actions.Engine_Start.ToString())
-                    {
-                        MainV2.comPort.doEngineControl((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, true);
-                        ((Control)sender).Enabled = true;
-                        return;
-                    }
-                    if (CMB_action.Text == actions.Engine_Stop.ToString())
-                    {
-                        MainV2.comPort.doEngineControl((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, false);
-                        ((Control)sender).Enabled = true;
-                        return;
-                    }
+                    // if (CMB_action.Text == actions.HighLatency_Enable.ToString())
+                    // {
+                    //     MainV2.comPort.doHighLatency(true);
+                    //     ((Control)sender).Enabled = true;
+                    //     return;
+                    // }
+                    // if (CMB_action.Text == actions.HighLatency_Disable.ToString())
+                    // {
+                    //     MainV2.comPort.doHighLatency(false);
+                    //     ((Control)sender).Enabled = true;
+                    //     return;
+                    // }
+                    // if (CMB_action.Text == actions.Toggle_Safety_Switch.ToString())
+                    // {
+                    //     var target_system = (byte)MainV2.comPort.sysidcurrent;
+                    //     if (target_system == 0) {
+                    //         log.Info("Not toggling safety on sysid 0");
+                    //         return;
+                    //     }
+                    //     var custom_mode = (MainV2.comPort.MAV.cs.sensors_enabled.motor_control && MainV2.comPort.MAV.cs.sensors_enabled.seen) ? 1u : 0u;
+                    //     var mode = new MAVLink.mavlink_set_mode_t() { custom_mode = custom_mode, target_system = target_system };
+                    //     MainV2.comPort.setMode(mode, MAVLink.MAV_MODE_FLAG.SAFETY_ARMED);
+                    //     ((Control)sender).Enabled = true;
+                    //     return;
+                    // }
+                    // if (CMB_action.Text == actions.Engine_Start.ToString())
+                    // {
+                    //     MainV2.comPort.doEngineControl((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, true);
+                    //     ((Control)sender).Enabled = true;
+                    //     return;
+                    // }
+                    // if (CMB_action.Text == actions.Engine_Stop.ToString())
+                    // {
+                    //     MainV2.comPort.doEngineControl((byte)MainV2.comPort.sysidcurrent, (byte)MainV2.comPort.compidcurrent, false);
+                    //     ((Control)sender).Enabled = true;
+                    //     return;
+                    // }
 
-                    if (CMB_action.Text == actions.Battery_Reset.ToString())
-                    {
-                        param1 = 0xff; // batt 1
-                        param2 = 100; // 100%
-                        param3 = 0;
-                    }
+                    // if (CMB_action.Text == actions.Battery_Reset.ToString())
+                    // {
+                    //     param1 = 0xff; // batt 1
+                    //     param2 = 100; // 100%
+                    //     param3 = 0;
+                    // }
 
                     MAVLink.MAV_CMD cmd;
                     try
@@ -3384,10 +3383,10 @@ namespace XagSurveillanceGCS.GCSViews
                 MainH.Panel1Collapsed = false;
         }
 
-        // private void loadFileToolStripMenuItem_Click(object sender, EventArgs e)
-        // {
-        //     POI.POILoad();
-        // }
+        private void loadFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            POI.POILoad();
+        }
 
         private void mainloop()
         {
@@ -6741,14 +6740,68 @@ namespace XagSurveillanceGCS.GCSViews
             }
         }
 
+        // if (!MainV2.comPort.BaseStream.IsOpen)
+        //         return;
+
+        // Distance Time Calculation
+        private Thread DistanceTimeThread;
+
+        public bool DistanceTimeThreadRunning { get; private set; } = false;
+
+        public void DistanceTimeStartThread()
+        {
+            DistanceTimeThreadRunning = true;
+            DistanceTimeThread = new Thread(DistanceTimeCalculationLoop);
+            DistanceTimeThread.Start();
+        }
+
+        public void DistanceTimeStopThread()
+        {
+            DistanceTimeThreadRunning = false;
+            DistanceTimeThread?.Join();  
+        }
+
+        public void DistanceTimeCalculationLoop()
+        {
+            try
+            {
+                while(DistanceTimeThreadRunning)
+                {   
+                    if (!MainV2.comPort.BaseStream.IsOpen)
+                        continue;
+                    
+                    float DisttoHome = MainV2.comPort.MAV.cs.DistToHome;
+                    float speedOfUAV = MainV2.comPort.MAV.cs.airspeed;
+
+                    float timeToHome = speedOfUAV > 0 ? DisttoHome / speedOfUAV : float.PositiveInfinity;
+                    // Console.WriteLine("Distance to Home {0}, Speed {1}, timeToHome {2}", DisttoHome, speedOfUAV, timeToHome);
+                    if (this.TimeToHome.InvokeRequired){
+                        this.TimeToHome.Invoke((MethodInvoker)delegate
+                        {
+                            this.TimeToHome.Text = "Time To Home " + timeToHome.ToString() + " s";
+                        });
+                    }else{
+                        this.TimeToHome.Text = "Time To Home " + timeToHome.ToString() + " s";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exceptionnnnn {0}", ex.ToString());
+            }
+        }
+
         private Thread workerThread;
         private bool GimbalConnectStop = false;
 
         public void GimbalConnectStartThread()
         {
-            GimbalConnectStop = true;
-            workerThread = new Thread(ConnectToGimbal);
-            workerThread.Start();
+            if(!GimbalConnectStop)
+            {  
+                GimbalConnectStop = true;
+                workerThread = new Thread(ConnectToGimbal);
+                workerThread.Start();
+            }
         }
 
         public void GimbalConnectStopThread()
@@ -6908,7 +6961,7 @@ namespace XagSurveillanceGCS.GCSViews
         {
             byte[] xBytes = BitConverter.GetBytes((short)x);
             byte[] yBytes = BitConverter.GetBytes((short)y);
-            Console.WriteLine("X,Y {0} {1}",BitConverter.ToString(xBytes),BitConverter.ToString(yBytes));
+            // Console.WriteLine("X,Y {0} {1}",BitConverter.ToString(xBytes),BitConverter.ToString(yBytes));
             // serial data
             byte[] serial = new byte[]
             {
@@ -6935,7 +6988,7 @@ namespace XagSurveillanceGCS.GCSViews
 
             byte tcpChecksum = CalculateTcpChecksum(serialFull);
             finalCommand[finalCommand.Length - 1] = tcpChecksum;
-            Console.WriteLine("Command sent: " + BitConverter.ToString(finalCommand));
+            // Console.WriteLine("Command sent: " + BitConverter.ToString(finalCommand));
             SendCommand(finalCommand);
         }
 
@@ -7004,7 +7057,7 @@ namespace XagSurveillanceGCS.GCSViews
         {
             int yaw = (int)(x * 2000);
             int pitch = (int)(y * 2000);
-            Console.WriteLine("Yaw And Pitch {0} {1}",yaw,pitch);
+            // Console.WriteLine("Yaw And Pitch {0} {1}",yaw,pitch);
             BuildPitchYawCommand(yaw,pitch);
         }
 
@@ -7675,6 +7728,71 @@ namespace XagSurveillanceGCS.GCSViews
             var q = new float[]{
                     float.NaN, float.NaN, float.NaN, float.NaN
                 };
+        }
+
+        public void DoJoystickCommandsToGimbal(double PitchValue, double YawValue, double ZoomValue)
+        {
+            // Console.WriteLine("Pitch, Yaw, Zoom Valuessssssssssss: "+PitchValue+","+YawValue+","+ZoomValue);
+            if(this._baseCameraController.SelectedCamera == "XAGCAM2")
+            {
+                GremsyControlPitchYaw(YawValue,PitchValue);
+                if(ZoomValue > 0) GremsyZoomIn();
+                else if(ZoomValue < 0) GremsyZoomOut();
+                else GremsyZoomStop();
+            }else{
+                XagCamPitchYawCommand(PitchValue, YawValue);
+                if(ZoomValue > 0) XagCamZoomInCommand();
+                else if(ZoomValue < 0) XagCamZoomOutCommand();
+                else XagCamZoomStopCommand();
+            }
+        }
+
+        public void CMB_MapPoint_Click(object sender, EventArgs e)
+        {
+            try{
+                CMB_MapPoint.Items.Clear();
+
+                // CMB_MapPoint.Items.Add("");
+                ObservableCollection<PointLatLngAlt> result = POI.GetPOIS();
+
+                foreach (var item in result)
+                {
+                    PointLatLngAlt pnt = item;
+
+                    string Tag = pnt.Tag + "\n" + pnt.ToString();
+                    CMB_MapPoint.Items.Add(Tag);
+                }
+            }catch{
+
+            }
+        }
+
+        public void CMB_MapPoint_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try{
+                if (!MainV2.comPort.BaseStream.IsOpen)
+                {
+                    CustomMessageBox.Show("Please Connect First");
+                    return;
+                }
+                ObservableCollection<PointLatLngAlt> result = POI.GetPOIS();
+
+                string selectedItem = CMB_MapPoint.Items[CMB_MapPoint.SelectedIndex].ToString();
+
+                foreach (var item in result)
+                {
+                    PointLatLngAlt pnt = item;
+
+                    string Tag = pnt.Tag + "\n" + pnt.ToString();
+                    if(Tag == selectedItem)
+                    {
+                        Console.WriteLine("Calculation Doneeeeeeeeeee");
+                        DistanceAndBearing(coords1.Lat,coords1.Lng,pnt.Lat,pnt.Lng);
+                    }
+                }
+            }catch{
+
+            }
         }
     }
 }
